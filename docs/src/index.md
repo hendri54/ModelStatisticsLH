@@ -12,7 +12,9 @@ data_table
 has_variable
 add_variable!
 delete_variable!
+get_value
 get_values
+set_value!
 set_values!
 ```
 
