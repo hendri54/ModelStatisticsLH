@@ -1,3 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 FilesLH = "69233b93-b644-4f5d-9b2e-8880c8b19068"
+ModelStatisticsLH = "d599ba40-5627-4e4f-b033-e40cc74d6877"

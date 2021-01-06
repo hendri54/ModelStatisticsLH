@@ -1,6 +1,6 @@
 Pkg.activate("./docs");
 
-using Documenter, FilesLH
+using Documenter, FilesLH, ModelStatisticsLH
 
 makedocs(
     modules = [ModelStatisticsLH],

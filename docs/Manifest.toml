@@ -110,6 +110,12 @@ version = "0.4.4"
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
+[[ModelStatisticsLH]]
+deps = ["CommonLH", "DocStringExtensions", "Random"]
+path = ".."
+uuid = "d599ba40-5627-4e4f-b033-e40cc74d6877"
+version = "0.1.0"
+
 [[OrderedCollections]]
 git-tree-sha1 = "cf59cfed2e2c12e8a2ff0a4f1e9b2cd8650da6db"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"

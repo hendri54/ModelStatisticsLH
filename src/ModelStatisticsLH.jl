@@ -10,7 +10,7 @@ export make_test_var_info, make_test_var_infos, make_test_values
 export ModelStats
 export n_vars, var_names, var_meta, get_meta
 export make_test_model_stats, validate_stats, data_table
-export has_variable, add_variable!, delete_variable!, get_value, get_values, set_values!
+export has_variable, add_variable!, delete_variable!, get_values, set_values!
 
 include("var_info.jl");
 include("group_stats.jl");

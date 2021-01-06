@@ -4,17 +4,26 @@ using ModelStatisticsLH
 function constructors_test()
     rng = MersenneTwister(434);
     @testset "Constructors" begin
-        ms = ModelStats();
+        T = (:x, :y);
+        ms = ModelStats{T}();
         @test n_vars(ms) == 0
 
         mMeta = Dict{Symbol, Any}([:test => true]);
-        ms = ModelStats(mMeta);
+        ms = ModelStats{T}(mMeta);
         @test n_vars(ms) == 0
         @test get_meta(ms, :test) == true
 
         vInfoV = make_test_var_infos(rng);
         nVars = length(vInfoV);
-        ms = ModelStats(mMeta, vInfoV);
+        ms = ModelStats{T}(mMeta, vInfoV);
+        @test n_vars(ms) == nVars
+
+        # Vector of VarInfo as input
+        viV = Vector{VarInfo}();
+        for (vName, vi) in vInfoV
+            push!(viV, vi);
+        end
+        ms = ModelStats{T}(mMeta, viV);
         @test n_vars(ms) == nVars
     end
 end
