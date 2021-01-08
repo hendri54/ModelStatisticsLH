@@ -32,7 +32,7 @@ function retrieve_test()
     rng = MersenneTwister(434);
     @testset "Retrieve" begin
         nVars = 6;
-        ms = make_test_model_stats(nVars, rng);
+        ms = make_test_model_stats(:test, nVars, rng);
         @test nVars == n_vars(ms)
         varNames = var_names(ms);
         @test length(varNames) == nVars
@@ -100,7 +100,7 @@ function getindex_test()
     rng = MersenneTwister(434);
 	@testset "getindex and setindex" begin
         nVars = 3;
-        ms = make_test_model_stats(nVars, rng);
+        ms = make_test_model_stats(:test, nVars, rng);
 
         varName = :new1;
         newValueV = rand(rng, 4,3,2);

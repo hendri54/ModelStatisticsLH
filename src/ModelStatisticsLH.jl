@@ -12,9 +12,15 @@ export n_vars, var_names, var_meta, get_meta
 export make_test_model_stats, validate_stats, data_table
 export has_variable, add_variable!, delete_variable!, get_values, set_values!
 
+export StatsCollection
+export add_mstats!, delete_mstats!, replace_mstats!
+export get_groups, has_mstats, get_mstats, get_stats, set_stats!
+export groups_from_name, statname_from_name
+export make_test_scollection
+
 include("var_info.jl");
 include("group_stats.jl");
-
+include("stats_collection.jl");
 
 
 format_values(v :: Vector{I}) where I <: Integer = 

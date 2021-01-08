@@ -362,11 +362,11 @@ reduce
 
 ## ---------  Testing
 
-function make_test_model_stats(nVars, rng :: AbstractRNG)
+function make_test_model_stats(T, nVars, rng :: AbstractRNG)
     mMeta = Dict{Symbol, Any}([:test => true]);
     varMeta = make_test_var_infos(nVars, rng);
     values = make_test_values(varMeta, rng);
-    gs = ModelStats{:test}(mMeta, varMeta, values);
+    gs = ModelStats{T}(mMeta, varMeta, values);
     @assert validate_stats(gs);
     return gs
 end
