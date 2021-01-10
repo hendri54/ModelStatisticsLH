@@ -1,6 +1,19 @@
 using Random, Test
 using ModelStatisticsLH
 
+## ---------  Setup
+
+# User defined struct to store
+mutable struct TestStruct
+    x
+    y
+    z
+end
+
+Base.size(TestStruct) = ();
+Base.isequal(t1 :: TestStruct, t2 :: TestStruct) = 
+    (t1.x == t2.x) && (t1.y == t2.y) && (t1.z == t2.z);
+
 function constructors_test()
     rng = MersenneTwister(434);
     @testset "Constructors" begin
@@ -78,6 +91,7 @@ function retrieve_test()
         newValueV = 12 .+ (1 : 4);
         vInfo = VarInfo(:new1, "new variable", eltype(newValueV); 
             lb = 10, ub = 20, size = size(newValueV));
+        @test check_var_info(vInfo; silent = false);
         add_variable!(ms, vInfo, newValueV);
         @test n_vars(ms) == nVars + 1
         @test has_variable(ms, varName)
@@ -106,6 +120,7 @@ function getindex_test()
         newValueV = rand(rng, 4,3,2);
         vInfo = VarInfo(varName, string(varName), eltype(newValueV); 
             size = size(newValueV));
+        @test check_var_info(vInfo; silent = false);
         add_variable!(ms, vInfo, newValueV);
         @test ms.new1[2:3, 1:2, 1] == newValueV[2:3, 1:2, 1]
 
@@ -119,11 +134,36 @@ function getindex_test()
     end
 end
 
+function struct_test()
+    rng = MersenneTwister(434);
+    @testset "Arbitrary structs" begin
+        nVars = 3;
+        ms = make_test_model_stats(:test, nVars, rng);
+
+        varName = :new1;
+        newValueV = TestStruct(1, 2, 3);
+        vInfo = VarInfo(varName, string(varName), TestStruct; 
+            size = size(newValueV));
+        @test check_var_info(vInfo; silent = false);
+        add_variable!(ms, vInfo, newValueV);
+        @test ms.new1 == newValueV
+
+        varName = :new2;
+        newValueV = [TestStruct(1,2,3), TestStruct(2,3,4)];
+        vInfo = VarInfo(varName, string(varName), Vector{TestStruct}; 
+            size = size(newValueV));
+        @test check_var_info(vInfo; silent = false);
+        add_variable!(ms, vInfo, newValueV);
+        @test all(ms.new2 .== newValueV)
+    end
+end
+
 
 @testset "ModelStats" begin
     constructors_test();
     retrieve_test();
     getindex_test();
+    struct_test();
 end
 
 # ------------

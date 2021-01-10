@@ -11,6 +11,15 @@ Contains information about a variable:
 - data type and size
 - optional additional meta info stored as key value pairs
 
+Example:
+```julia
+vi = VarInfo(:x, "This is x", Vector{Int}; size = (3,), lb = 2);
+eltype(vi) == Vector{Int};
+size(vi) == (3,);
+```
+
+It is possible to add arbitrary user defined objects as long as they support `Base.size`.
+
 ```@docs
 VarInfo
 get_options
@@ -65,15 +74,21 @@ The user defines `statname_from_name` and `groups_from_name` to translate a vari
 
 ```julia
 sc = StatsCollection{:x}();
+# Add the statistics, by group
 grp = (:gpa, :parental);
-ms = ModelStats{}(...);
+ms = ModelStats{grp}(...);
 add_mstats!(sc, ms);
 ms == get_mstats(sc, grp);
+# Different ways of retrieving stats
 x1 = get_stats(sc, grp, :workTime);
 x1 == get_stats(sc, :workTime_gp);
 x1 == sc.workTime_gp;
-sc.workTime_gp[3] = 0.5;
+# getindex is overloaded
 sc.workTime_gp[3] == 0.5;
+# setindex is overloaded
+sc.workTime_gp[3] = 0.5;
+# setproperty is overloaded
+sc.workTime_gp = newValues;
 ```
 
 ```@docs

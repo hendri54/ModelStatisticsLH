@@ -4,14 +4,14 @@
 Container for a collection of `ModelStats`. May also contain nested `StatsCollection`s.
 """
 struct StatsCollection{T}
-    d :: Dict{Any, Union{StatsCollection, ModelStats}}
+    d :: Dict{Any, ModelStats}
 end
 
 
 ## -----------  Constructor
 
 StatsCollection{T}() where T = StatsCollection{T}(
-    Dict{Any, Union{StatsCollection, ModelStats}}()
+    Dict{Any, ModelStats}()
 );
 
 
@@ -21,8 +21,6 @@ StatsCollection{T}() where T = StatsCollection{T}(
 	$(SIGNATURES)
 
 Add `ModelStats` or a nested `StatsCollection`.
-
-# make recursive +++++
 """
 function add_mstats!(m :: StatsCollection{T}, s :: ModelStats{T2}) where {T, T2}
     @assert !has_mstats(m, T2) "$s already exists in $m";
@@ -34,8 +32,6 @@ end
 	$(SIGNATURES)
 
 Delete `ModelStats`.
-
-# make recursive +++++
 """
 function delete_mstats!(m :: StatsCollection{T}, msName) where {T}
     @assert has_mstats(m, msName) "$msName not found in $m";
@@ -47,8 +43,6 @@ end
 	$(SIGNATURES)
 
 Replace `ModelStats`. Add it if it does not exist.
-
-# make recursive +++++
 """
 function replace_mstats!(m :: StatsCollection{T}, s :: ModelStats{T2}) where {T, T2}
     m.d[T2] = s;
@@ -61,9 +55,7 @@ end
 """
 	$(SIGNATURES)
 
-List of all the `groups`.
-
-# make recursive +++++
+List of all the `groups`. That is, `m` contains `ModelStats{grp}` for each `grp in get_groups(m)`.
 """
 get_groups(m :: StatsCollection{T}) where T = keys(m.d);
 
@@ -72,8 +64,6 @@ get_groups(m :: StatsCollection{T}) where T = keys(m.d);
 	$(SIGNATURES)
 
 Does the `ModelStats{groups}` object exist?
-
-make recursive +++++
 """
 function has_mstats(m :: StatsCollection{T}, groups) where T
     return haskey(m.d, groups);
@@ -83,8 +73,6 @@ end
 	$(SIGNATURES)
 
 Retrieve the `ModelStats{groups}` object. Errors if `groups` not found.
-
-make recursive +++++
 """
 function get_mstats(m :: StatsCollection{T}, groups) where T
     @assert has_mstats(m, groups)  "$groups not found in $m"
@@ -126,7 +114,7 @@ function Base.getproperty(m :: StatsCollection{T}, sg :: Symbol) where T
 end
 
 Base.getindex(m :: StatsCollection{T}, sg :: Symbol, idx...) where T = 
-    get_stats(m, sg)[idx...];
+    getindex(get_stats(m, sg), idx...);
 
 
 """
@@ -146,8 +134,15 @@ function set_stats!(m :: StatsCollection{T}, groups, statName :: Symbol, x) wher
 	setproperty!(get_mstats(m, groups), statName, x);
 end
 
+set_stats!(m :: StatsCollection{T}, sg :: Symbol, x) where T = 
+    set_stats!(m, groups_from_name(m, sg), statname_from_name(m, sg), x);
+
+# `sc.x1_gp = newValues`
+Base.setproperty!(m :: StatsCollection{T}, sg :: Symbol, x) where T = 
+    set_stats!(m, sg, x);
+
 Base.setindex!(m :: StatsCollection{T}, sg :: Symbol, x, idx...) where T = 
-    set_stats!(m, sg)[idx...] .= x;
+    setindex!(get_stats(m, sg), x, idx...);
 
     
 """

@@ -109,19 +109,32 @@ function dot_notation_test()
         x2 = sc.x1_xy;
         @test x == x2
 
+        # setstats!
+        set_stats!(sc, :x1_xy, x .+ 1);
+        @test all(sc.x1_xy .== x .+ 1);
+        sc.x1_xy = xValues;
+        @test all(sc.x1_xy .== xValues);
+
+        # getindex
+        sc.x1_xy .= xValues;
         @test sc.x1_xy[2,3] == xValues[2,3]
         @test sc.x1_xy[3] == xValues[3]
         @test sc.x1_xy[:,2] == xValues[:,2]
 
+        # setstats!
         newValues = xValues .+ 0.5;
         set_stats!(sc, grp, varName, newValues);
         x3 = get_stats(sc, statName);
         @test isapprox(newValues, x3)
 
+        # setindex!
+        sc.x1_xy .= xValues;
         sc.x1_xy[3,2] = 17.0;
         @test sc.x1_xy[3,2] == 17.0
+        @test sc.x1_xy[2,2] == xValues[2,2];
         sc.x1_xy[:,2] .= 17.0;
         @test all(sc.x1_xy[:,2] .== 17.0)
+        @test sc.x1_xy[:,1] == xValues[:,1];
     end
 end
 

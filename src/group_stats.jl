@@ -311,7 +311,7 @@ function add_variable!(g :: ModelStats{T}, vInfo :: VarInfo, newValues) where T
     vName = var_name(vInfo);
     @assert !has_variable(g, vName)  "$vName already exists"
     g.varMeta[vName] = vInfo;
-    g.values[vName] = convert.(eltype(vInfo), newValues);
+    g.values[vName] = newValues;
 end
 
 

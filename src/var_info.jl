@@ -12,6 +12,12 @@ Predefined options are:
 - grandSum
 
 These can be used to check a data matrix.
+
+# Example
+```julia
+vi = VarInfo{Vector{Int}}(:x, "x stores a Vector of Int"; size = (3,), lb = 0);
+eltype(vi) == Int;
+```
 """
 struct VarInfo{T}
     varName :: Symbol
@@ -175,7 +181,9 @@ function check_size(vi :: VarInfo{T}; silent :: Bool = true) where T
     if has_option(vi, :size)
         sz = get_option(vi, :size);
         isValid = isValid && isa(sz, Tuple);
-        isValid = isValid && (length(sz) == ndims(T));
+        if T <: AbstractArray
+            isValid = isValid && (length(sz) == ndims(T));
+        end
     else
         error("Size is required");
     end
