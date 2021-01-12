@@ -1,7 +1,7 @@
 name = "ModelStatisticsLH"
 uuid = "d599ba40-5627-4e4f-b033-e40cc74d6877"
 authors = ["hendri54 <hendricksl@protonmail.com> and contributors"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 CommonLH = "96c8dc4a-d23f-53b2-b478-aad5d5ab80bd"

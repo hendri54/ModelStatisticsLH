@@ -262,6 +262,10 @@ function get_values(g :: ModelStats{T}, vName :: Symbol;
     defaultValue = :error) where T
     if has_variable(g, vName)
         x = getfield(g, :values)[vName];
+    elseif isnothing(defaultValue)
+        x = nothing;
+    elseif ismissing(defaultValue)
+        x = missing;
     elseif defaultValue != :error
         x = defaultValue;
     else
@@ -286,9 +290,17 @@ g.x = [1,2,3];
 function set_values!(g :: ModelStats{T}, vName :: Symbol, newValues;
     validate :: Bool = true, silent :: Bool = false)  where T
     vMeta = var_meta(g, vName);
-    g.values[vName] = convert.(eltype(g, vName), newValues);
+    g.values[vName] = promote_new_values(vMeta, newValues);
     validate  &&  validate_variable(g, vName; silent = silent);
 end
+
+# Promote new values when possible, so that any Integer can be passed to, say, a `UInt8` field.
+promote_new_values(vi :: VarInfo{T}, newValues) where T = newValues;
+promote_new_values(vi :: VarInfo{T1}, newValues :: T2) where 
+    {T1 <: Number, T2 <: Number} = convert(T1, newValues);
+promote_new_values(vi :: VarInfo{<:AbstractArray{T1}}, 
+    newValues :: AbstractArray{T2}) where {T1, T2} =
+    convert.(T1, newValues);
 
 
 """

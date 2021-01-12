@@ -11,6 +11,7 @@ mutable struct TestStruct
 end
 
 Base.size(TestStruct) = ();
+Base.length(TestStruct) = 1;
 Base.isequal(t1 :: TestStruct, t2 :: TestStruct) = 
     (t1.x == t2.x) && (t1.y == t2.y) && (t1.z == t2.z);
 
@@ -147,6 +148,10 @@ function struct_test()
         @test check_var_info(vInfo; silent = false);
         add_variable!(ms, vInfo, newValueV);
         @test ms.new1 == newValueV
+
+        newValueV = TestStruct(4,5,6);
+        ms.new1 = newValueV;
+        @test ms.new1 == newValueV;
 
         varName = :new2;
         newValueV = [TestStruct(1,2,3), TestStruct(2,3,4)];
