@@ -62,8 +62,11 @@ function get_stats_test()
         sc = make_test_scollection(T, rng);
         grpV = collect(get_groups(sc));
         grp = grpV[2];
+
+        @test get_stats(sc, grp, :notThere; defaultValue = 1) == 1;
         ms = get_mstats(sc, grp);
         for varName in var_names(ms)
+            @test has_variable(sc, grp, varName);
             x = get_stats(sc, grp, varName);
             @test isequal(x, getproperty(ms, varName))
 

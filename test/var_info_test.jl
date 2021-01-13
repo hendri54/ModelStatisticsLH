@@ -1,7 +1,7 @@
 function var_info_test(T)
     rng = MersenneTwister(123);
     @testset "VarInfo $T" begin
-        vi = make_test_var_info(:x, T, rng);
+        vi = make_test_var_info(:x, T, nothing, rng);
         x = make_test_values(vi, rng);
         @test check_var(vi, x; silent = false)
         lb, ub = bounds(vi);

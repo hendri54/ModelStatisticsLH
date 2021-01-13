@@ -66,6 +66,13 @@ Base.show(io :: IO, vi :: VarInfo{T}) where {T} =
 """
 	$(SIGNATURES)
 
+Returns `T` for `VarInfo{T}`.
+"""
+value_type(vi :: VarInfo{T}) where T = T;
+
+"""
+	$(SIGNATURES)
+
 Retrieve an option. Return `nothing` if option not found.
 """
 function get_option(vi :: VarInfo{T}, oName :: Symbol) where T
@@ -116,8 +123,13 @@ Returns the bounds of the variable. These are `nothing` if not set.
 """
 bounds(v :: VarInfo{T}) where T = get_options(v, (:lb, :ub));
 
+"""
+	$(SIGNATURES)
+
+Returns `true` if `size(vi) == ()`. For example, this is the case for `Real`, but also for user defined types.
+"""
 isscalar(vi :: VarInfo{T}) where T =
-    T <: Number;
+    size(vi) == ();
 
 isequal_common(v1 :: VarInfo{T1}, v2 :: VarInfo{T2}) where {T1, T2} = false;
 
@@ -205,7 +217,7 @@ function check_var(vi :: VarInfo{T},  x :: T2;
     silent :: Bool = true) where {T, T2}
 
     if T != T2
-        !silent  &&  @warn "Type mismatch: $vi, $T2";
+        !silent  &&  @warn "Type mismatch for $vi: $T vs $T2";
         return false;
     end
     isValid = check_bounds(vi, x; silent = silent)  &&
@@ -314,7 +326,7 @@ function make_test_var_infos(nVars, rng :: AbstractRNG)
         else
             T = Array{eltypeV[iVar], length(szV[iVar])};
         end            
-        varMeta[varName] = make_test_var_info(varName, T, rng);
+        varMeta[varName] = make_test_var_info(varName, T, szV[iVar], rng);
     end
     return varMeta
 end
@@ -327,6 +339,7 @@ Make `VarInfo` for testing.
 function make_test_var_info(
         vName :: Symbol, 
         T :: DataType, 
+        sz,
         rng :: AbstractRNG)
 
     eType = eltype(T);
@@ -337,7 +350,9 @@ function make_test_var_info(
         vi = VarInfo(vName, "Descr $vName", T; lb = lb, ub = ub);
     elseif T <: Array
         N = ndims(T);
-        sz = Tuple(rand(rng, 1:5, N));
+        if isnothing(sz)
+            sz = Tuple(rand(rng, 1:5, N));
+        end
         vi = VarInfo(vName, "Descr $vName", T; lb = lb, ub = ub, size = sz);
     else
         error("Invalid $T")

@@ -4,15 +4,19 @@
 Container for a collection of `ModelStats`. May also contain nested `StatsCollection`s.
 """
 struct StatsCollection{T}
+    meta :: Dict{Symbol, Any}
     d :: Dict{Any, ModelStats}
 end
 
 
 ## -----------  Constructor
 
-StatsCollection{T}() where T = StatsCollection{T}(
-    Dict{Any, ModelStats}()
-);
+StatsCollection{T}(meta :: Dict{Symbol, Any}) where T = 
+    StatsCollection{T}(meta,  Dict{Any, ModelStats}());
+
+StatsCollection{T}() where T = StatsCollection{T}(Dict{Symbol,Any}());
+
+get_meta(s :: StatsCollection{T}, mKey) where T = s.meta[mKey];
 
 
 ## -----------  Adding stats
@@ -80,13 +84,26 @@ function get_mstats(m :: StatsCollection{T}, groups) where T
     return ms
 end
 
+
+## ----------  Directly retrieve individual statistics
+
+"""
+	$(SIGNATURES)
+
+Does `StatsCollection` contain variable `statName`?
+"""
+has_variable(m :: StatsCollection{T}, groups, statName :: Symbol) where T =
+    has_variable(get_mstats(m, groups), statName);
+
+
 """
 	$(SIGNATURES)
 
 Retrieve a statistic. Groups are specified.
 """
-get_stats(m :: StatsCollection{T}, groups, statName :: Symbol) where T =
-	getproperty(get_mstats(m, groups), statName);
+get_stats(m :: StatsCollection{T}, groups, statName :: Symbol;
+    defaultValue = :error) where T =
+	get_values(get_mstats(m, groups), statName; defaultValue = defaultValue);
     
 
 """
@@ -102,12 +119,18 @@ m.workTime_gp == get_stats(m, :workTime_gp)
 m.workTime_gp[2,3] == get_stats(m, :workTime_gp)[2,3]
 ```
 """
-get_stats(m :: StatsCollection{T}, sg :: Symbol) where T = 
-    get_stats(m, groups_from_name(m, sg), statname_from_name(m, sg));
+function get_stats(m :: StatsCollection{T}, sg :: Symbol;
+    defaultValue = :error) where T
+    return get_stats(
+        m, groups_from_name(m, sg), statname_from_name(m, sg);
+        defaultValue = defaultValue)
+end
 
 function Base.getproperty(m :: StatsCollection{T}, sg :: Symbol) where T 
     if sg == :d
         return getfield(m, :d)
+    elseif sg == :meta
+        return getfield(m, :meta)
     else
         return get_stats(m, sg);
     end
@@ -140,6 +163,8 @@ set_stats!(m :: StatsCollection{T}, sg :: Symbol, x) where T =
 # `sc.x1_gp = newValues`
 Base.setproperty!(m :: StatsCollection{T}, sg :: Symbol, x) where T = 
     set_stats!(m, sg, x);
+Base.setproperty!(m :: StatsCollection{T}, x :: ModelStats{T2}) where {T, T2} =     
+    replace_mstats!(m, x);
 
 Base.setindex!(m :: StatsCollection{T}, sg :: Symbol, x, idx...) where T = 
     setindex!(get_stats(m, sg), x, idx...);
@@ -170,6 +195,7 @@ groups_from_name(m, :workTime_gp) == :workTime
 """
 statname_from_name(m :: StatsCollection, statName :: Symbol) = 
     error("User defines this for each parametric StatsCollection");
+
 
 
 ## -------  Testing

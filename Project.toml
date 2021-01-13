@@ -1,12 +1,14 @@
 name = "ModelStatisticsLH"
 uuid = "d599ba40-5627-4e4f-b033-e40cc74d6877"
 authors = ["hendri54 <hendricksl@protonmail.com> and contributors"]
-version = "0.1.2"
+version = "0.1.4"
 
 [deps]
+ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
 CommonLH = "96c8dc4a-d23f-53b2-b478-aad5d5ab80bd"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+StructLH = "10801879-faf9-5fee-b4da-d4f48ef6194b"
 
 [compat]
 DocStringExtensions = "0.8, 1"

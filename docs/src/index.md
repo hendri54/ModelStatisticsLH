@@ -105,4 +105,12 @@ groups_from_name
 statname_from_name
 ```
 
+
+## Reductions
+
+```@docs
+reduce_stats
+reduce_one_field
+```
+
 ---------

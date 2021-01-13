@@ -89,6 +89,7 @@ function retrieve_test()
 
         varName = :new1;
         @test !has_variable(ms, varName)
+        @test get_values(ms, varName; defaultValue = 1) == 1
         newValueV = 12 .+ (1 : 4);
         vInfo = VarInfo(:new1, "new variable", eltype(newValueV); 
             lb = 10, ub = 20, size = size(newValueV));

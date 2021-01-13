@@ -266,7 +266,7 @@ function get_values(g :: ModelStats{T}, vName :: Symbol;
         x = nothing;
     elseif ismissing(defaultValue)
         x = missing;
-    elseif defaultValue != :error
+    elseif !isequal(defaultValue, :error)
         x = defaultValue;
     else
         error("$vName not found in $g");
@@ -357,19 +357,6 @@ end
 #     return tbM
 # end
 
-
-## ----------  Reductions
-
-"""
-	$(SIGNATURES)
-
-Apply a scalar reduction function to all numeric fields in a `Vector` of `ModelStats`.
-
-# Example
-```
-reduce
-```
-"""
 
 
 ## ---------  Testing
